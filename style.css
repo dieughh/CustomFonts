@@ -1,0 +1,4 @@
+/* Можно оставить пустым или добавить плавные переходы */
+body, body * {
+  transition: font-family 0.15s ease, font-weight 0.15s ease, letter-spacing 0.15s ease;
+}
