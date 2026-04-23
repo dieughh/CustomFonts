@@ -1,26 +1,27 @@
 {
-  "name": "Custom Fonts",
-  "image": "logo.png",
-  "banner": "banner.png",
-  "libraryLogo": "logo.png",
-  "author": "dieugh",
-  "description": "Этот аддон для изменения типографики в приложении. С его помощью вы можете загрузить любой файл шрифта (TTF, OTF, WOFF) и полностью настроить его отображение: от жирности и межбуквенного интервала до декоративных теней. Сделайте интерфейс по-настоящему своим!",
-  "version": "1.0.0",
-  "css": "style.css",
-  "script": "script.js",
-  "type": "script",
-  "tags": [
-    "script",
-    "fonts",
-    "custom"
-  ],
-  "dependencies": [],
-  "conflictsWith": [],
-  "allowedUrls": [],
-  "supportedVersions": [
-    "5.90.0"
-  ],
-  "fromPext": true,
-  "installSource": "store",
-  "id": "00ae74c8f8603500fafa85d2"
+    "name": "Custom Fonts",
+    "image": "logo.png",
+    "banner": "banner.png",
+    "libraryLogo": "logo.png",
+    "author": "dieugh",
+    "description": "Этот аддон для изменения типографики в приложении. С его помощью вы можете загрузить любой файл шрифта (TTF, OTF, WOFF) и полностью настроить его отображение: от жирности и межбуквенного интервала до декоративных теней. Сделайте интерфейс по-настоящему своим!",
+    "version": "1.0.0",
+    "css": "style.css",
+    "script": "script.js",
+    "type": "script",
+    "tags": [
+        "script",
+        "fonts",
+        "custom"
+    ],
+    "dependencies": [],
+    "conflictsWith": [],
+    "allowedUrls": [],
+    "supportedVersions": [
+        "5.90.0"
+    ],
+    "fromPext": true,
+    "installSource": "local",
+    "id": "00ae74c8f8603500fafa85d2",
+    "packageHash": "9049b003dbb5fc442382eca58ed34f37f92db9338eff45cad7cf2d4987eefeb0"
 }

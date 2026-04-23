@@ -16,6 +16,7 @@
     italic: false,
     underline: false,
     lineThrough: false,
+    textShadowEnabled: false,
     textShadowX: 0,
     textShadowY: 0,
     textShadowBlur: 0,
@@ -23,6 +24,12 @@
     fontData: null,
     fontFileName: ''
   };
+
+  // Управление Blob URL
+  let currentFontUrl = null;
+  // Управление наблюдателями
+  let styleObserver = null;
+  let uiObserver = null;
 
   // --- IndexedDB ---
   function openDB() {
@@ -50,6 +57,7 @@
         italic: settings.italic,
         underline: settings.underline,
         lineThrough: settings.lineThrough,
+        textShadowEnabled: settings.textShadowEnabled,
         textShadowX: settings.textShadowX,
         textShadowY: settings.textShadowY,
         textShadowBlur: settings.textShadowBlur,
@@ -81,6 +89,7 @@
         settings.italic = data.italic ?? false;
         settings.underline = data.underline ?? false;
         settings.lineThrough = data.lineThrough ?? false;
+        settings.textShadowEnabled = data.textShadowEnabled ?? false;
         settings.textShadowX = data.textShadowX ?? 0;
         settings.textShadowY = data.textShadowY ?? 0;
         settings.textShadowBlur = data.textShadowBlur ?? 0;
@@ -118,6 +127,7 @@
     settings.italic = unwrapSetting(rawSettings.italic, false);
     settings.underline = unwrapSetting(rawSettings.underline, false);
     settings.lineThrough = unwrapSetting(rawSettings.lineThrough, false);
+    settings.textShadowEnabled = unwrapSetting(rawSettings.textShadowEnabled, false);
     settings.textShadowX = unwrapSetting(rawSettings.textShadowX, 0);
     settings.textShadowY = unwrapSetting(rawSettings.textShadowY, 0);
     settings.textShadowBlur = unwrapSetting(rawSettings.textShadowBlur, 0);
@@ -138,22 +148,32 @@
     return { ttf: 'truetype', otf: 'opentype', woff: 'woff', woff2: 'woff2' }[ext] || 'truetype';
   }
 
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
   function applyStyles() {
     const {
       fontWeight: userWeight, letterSpacing, italic, underline, lineThrough,
-      textShadowX, textShadowY, textShadowBlur, textShadowColor,
+      textShadowEnabled, textShadowX, textShadowY, textShadowBlur, textShadowColor,
       fontData, fontFileName
     } = settings;
     let css = '';
 
+    // Освобождаем предыдущий Blob URL
+    if (currentFontUrl) {
+      URL.revokeObjectURL(currentFontUrl);
+      currentFontUrl = null;
+    }
+
     if (fontData) {
       const blob = new Blob([fontData], { type: getMimeType(fontFileName) });
-      const url = URL.createObjectURL(blob);
+      currentFontUrl = URL.createObjectURL(blob);
       const format = getFormatFromFileName(fontFileName);
       css += `
         @font-face {
           font-family: '${FONT_FAMILY}';
-          src: url('${url}') format('${format}');
+          src: url('${currentFontUrl}') format('${format}');
           font-display: swap;
         }
       `;
@@ -165,14 +185,19 @@
 
     const baseWeight = 400;
     const weightScale = userWeight / baseWeight;
-    const bodyWeight = Math.round(baseWeight * weightScale);
-    const mediumWeight = Math.round(500 * weightScale);
-    const boldWeight = Math.round(700 * weightScale);
+    const bodyWeight = clamp(Math.round(baseWeight * weightScale), 100, 900);
+    const mediumWeight = clamp(Math.round(500 * weightScale), 100, 900);
+    const boldWeight = clamp(Math.round(700 * weightScale), 100, 900);
 
     const decorations = [];
     if (underline) decorations.push('underline');
     if (lineThrough) decorations.push('line-through');
     const textDecorationValue = decorations.length > 0 ? decorations.join(' ') : 'none';
+
+    // Тень применяется только если включена
+    const shadowValue = textShadowEnabled
+      ? `${textShadowX}px ${textShadowY}px ${textShadowBlur}px ${textShadowColor}`
+      : 'none';
 
     css += `
       :root {
@@ -181,7 +206,7 @@
         --pscf-weight-body: ${bodyWeight};
         --pscf-weight-medium: ${mediumWeight};
         --pscf-weight-bold: ${boldWeight};
-        --pscf-text-shadow: ${textShadowX}px ${textShadowY}px ${textShadowBlur}px ${textShadowColor};
+        --pscf-text-shadow: ${shadowValue};
         --pscf-font-style: ${italic ? 'italic' : 'normal'};
         --pscf-text-decoration: ${textDecorationValue};
       }
@@ -260,7 +285,6 @@
 
   // --- UI ---
   let mainButtonDesc = null;
-  let subPageContainer = null;
 
   function updateUI() {
     if (mainButtonDesc) {
@@ -465,11 +489,15 @@
     portal.appendChild(overlay);
     portal.appendChild(modal);
     document.body.appendChild(portal);
-    subPageContainer = portal;
   }
 
   function injectSettingsUI() {
     let currentButtonLi = null;
+
+    if (uiObserver) {
+      uiObserver.disconnect();
+      uiObserver = null;
+    }
 
     const addButtonIfNeeded = () => {
       const settingsContainer = document.querySelector('[class*="Settings_root"]');
@@ -536,11 +564,11 @@
       log('Кнопка добавлена в настройки');
     };
 
-    const observer = new MutationObserver(() => {
+    uiObserver = new MutationObserver(() => {
       addButtonIfNeeded();
     });
 
-    observer.observe(document.body, {
+    uiObserver.observe(document.body, {
       childList: true,
       subtree: true
     });
@@ -570,13 +598,16 @@
     subscribeToPulseSyncSettings();
     injectSettingsUI();
 
-    const observer = new MutationObserver(() => {
+    if (styleObserver) {
+      styleObserver.disconnect();
+    }
+    styleObserver = new MutationObserver(() => {
       if (!document.getElementById('custom-fonts-style')) {
         styleElement = null;
         applyStyles();
       }
     });
-    observer.observe(document.documentElement, { childList: true, subtree: true });
+    styleObserver.observe(document.documentElement, { childList: true, subtree: true });
   }
 
   if (document.readyState === 'loading') {
