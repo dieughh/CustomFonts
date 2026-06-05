@@ -10,7 +10,6 @@
   const warn = (...args) => console.warn(`[${ADDON_NAME}]`, ...args);
   const error = (...args) => console.error(`[${ADDON_NAME}]`, ...args);
 
-  // --- Карта: отображаемое имя → имя файла в Assets/ ---
   const SYSTEM_FONTS_MAP = {
     'Arial': 'Arial.ttf',
     'Calibri': 'Calibri.ttf',
@@ -115,7 +114,6 @@
     log('Шрифт сброшен');
   }
 
-  // --- Типографика из handleEvents.json ---
   function unwrapSetting(entry, fallback) {
     if (entry && typeof entry === 'object' && !Array.isArray(entry)) {
       if (typeof entry.value !== 'undefined') return entry.value;
@@ -138,7 +136,6 @@
     log('Типографика обновлена');
   }
 
-  // --- Применение CSS ---
   let styleElement = null;
 
   function getMimeType(fileName) {
@@ -169,7 +166,6 @@
       currentFontUrl = null;
     }
 
-    // 1. Пользовательский загруженный шрифт
     if (fontData) {
       const blob = new Blob([fontData], { type: getMimeType(fontFileName) });
       currentFontUrl = URL.createObjectURL(blob);
@@ -183,7 +179,6 @@
       `;
       activeFontFamily = `'${FONT_FAMILY}'`;
     }
-    // 2. Системный шрифт из Assets
     else if (systemFontDisplayName && assetsManager) {
       const fileName = SYSTEM_FONTS_MAP[systemFontDisplayName];
       if (fileName) {
@@ -288,7 +283,6 @@
     log('Стили применены');
   }
 
-  // --- Пользовательский файл ---
   function createFileInput() {
     const input = document.createElement('input');
     input.type = 'file';
@@ -318,7 +312,6 @@
     input.click();
   }
 
-  // --- Применение системного шрифта ---
   async function applySystemFont(displayName) {
     if (!assetsManager) {
       error('AssetsManager не инициализирован');
@@ -338,7 +331,6 @@
     log('Применён системный шрифт:', displayName, '→', fileName);
   }
 
-  // --- UI: главная кнопка в настройках PulseSync ---
   let mainButtonDesc = null;
 
   function updateUI() {
@@ -351,8 +343,6 @@
         mainButtonDesc.textContent = 'Шрифт не выбран';
       }
     }
-
-    // Обновляем текст кнопки в открытой модалке системных шрифтов
     const portal = document.querySelector('[data-custom-fonts-portal]');
     if (portal) {
       const btnSpan = portal.querySelector('.settingBarWithDropdown_button span:first-child');
@@ -360,7 +350,6 @@
     }
   }
 
-  // --- Модальное окно с кастомным dropdown (порталом) ---
   function openSubPage() {
     const existingPortal = document.querySelector('[data-custom-fonts-portal]');
     if (existingPortal) existingPortal.remove();
@@ -401,7 +390,6 @@
     modal.setAttribute('role', 'dialog');
     modal.setAttribute('aria-modal', 'true');
 
-    // Header
     const header = document.createElement('header');
     header.className = 'wEOFUiLOfluq86BrDUfg ShortcutsModal_modalHeader__IYJ9m';
     header.style.display = 'flex';
@@ -441,7 +429,6 @@
     header.appendChild(title);
     header.appendChild(closeBtn);
 
-    // Content
     const content = document.createElement('div');
     content.className = 'fp0QgCrX1y48p3elvLVi ni3sfTj4hRfj63FbfQTG ShortcutsModal_modalContent__SCpYX Modal_content_no_right_padding';
     content.style.padding = '16px 0';
@@ -455,7 +442,7 @@
     list.style.margin = '0';
     list.style.width = '100%';
 
-    // ---- Пункт 1: Выбрать файл шрифта ----
+    // Пункт 1: выбрать файл
     const item1 = document.createElement('li');
     item1.className = 'Settings_item__Ksa9h';
     item1.style.padding = '0 24px';
@@ -490,7 +477,7 @@
     btn1.addEventListener('click', createFileInput);
     item1.appendChild(btn1);
 
-    // ---- Пункт 2: Сбросить шрифт ----
+    // Пункт 2: сбросить
     const item2 = document.createElement('li');
     item2.className = 'Settings_item__Ksa9h';
     item2.style.padding = '0 24px';
@@ -528,7 +515,7 @@
     });
     item2.appendChild(btn2);
 
-    // ---- Пункт 3: Системные шрифты (кастомный dropdown с порталом) ----
+    // Пункт 3: системные шрифты (dropdown)
     const item3 = document.createElement('li');
     item3.className = 'Settings_item__Ksa9h';
     item3.style.padding = '0 24px';
@@ -620,7 +607,6 @@
         white-space: nowrap;
       `;
 
-      // Пункт "Не выбран"
       const noneOpt = document.createElement('div');
       noneOpt.textContent = 'Не выбран';
       noneOpt.style.cssText = itemStyle;
@@ -631,7 +617,6 @@
       });
       list.appendChild(noneOpt);
 
-      // Список системных шрифтов
       SYSTEM_FONTS_DISPLAY.forEach(displayName => {
         const opt = document.createElement('div');
         opt.textContent = displayName;
@@ -644,7 +629,6 @@
         list.appendChild(opt);
       });
 
-      // Hover-эффекты
       list.querySelectorAll('div').forEach(div => {
         div.addEventListener('mouseenter', () => div.style.backgroundColor = 'rgba(255,255,255,0.1)');
         div.addEventListener('mouseleave', () => div.style.backgroundColor = 'transparent');
@@ -670,7 +654,6 @@
     item3.appendChild(label);
     item3.appendChild(dropdownContainer);
 
-    // Собираем всё вместе
     list.appendChild(item1);
     list.appendChild(item2);
     list.appendChild(item3);
@@ -683,10 +666,8 @@
     document.body.appendChild(portal);
   }
 
-  // --- Инъекция кнопки в настройки PulseSync ---
   function injectSettingsUI() {
     let currentButtonLi = null;
-
     if (uiObserver) {
       uiObserver.disconnect();
       uiObserver = null;
@@ -701,14 +682,8 @@
         }
         return;
       }
-
-      if (settingsContainer.querySelector('[data-custom-fonts-button]')) {
-        return;
-      }
-
-      if (currentButtonLi) {
-        currentButtonLi.remove();
-      }
+      if (settingsContainer.querySelector('[data-custom-fonts-button]')) return;
+      if (currentButtonLi) currentButtonLi.remove();
 
       const li = document.createElement('li');
       li.className = 'Settings_item__Ksa9h';
@@ -748,7 +723,6 @@
       span.appendChild(contentDiv);
       span.appendChild(svg);
       button.appendChild(span);
-
       button.addEventListener('click', openSubPage);
 
       li.appendChild(button);
@@ -757,14 +731,11 @@
       log('Кнопка добавлена в настройки');
     };
 
-    uiObserver = new MutationObserver(() => {
-      addButtonIfNeeded();
-    });
+    uiObserver = new MutationObserver(() => addButtonIfNeeded());
     uiObserver.observe(document.body, { childList: true, subtree: true });
     addButtonIfNeeded();
   }
 
-  // --- Подписка на настройки PulseSync ---
   function subscribeToPulseSyncSettings() {
     if (!window.pulsesyncApi || typeof window.pulsesyncApi.getSettings !== 'function') {
       warn('pulsesyncApi недоступен, используются значения по умолчанию.');
@@ -780,7 +751,34 @@
     store.onChange(() => update());
   }
 
-  // --- Инициализация ---
+  // ========== УПРАВЛЕНИЕ КЛАССОМ ДЛЯ СКРЫТИЯ СКРОЛЛБАРА ==========
+  function updateWaveScrollbarClass() {
+    const isWave = !!document.querySelector('[class*="VibePage_root"]') ||
+                   ['/', '/home'].includes(location.pathname) ||
+                   location.pathname.startsWith('/home');
+    if (isWave) {
+      document.documentElement.classList.add('wave-page');
+    } else {
+      document.documentElement.classList.remove('wave-page');
+    }
+  }
+
+  function initScrollbarController() {
+    updateWaveScrollbarClass();
+
+    const observer = new MutationObserver(() => updateWaveScrollbarClass());
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+
+    let lastUrl = location.href;
+    setInterval(() => {
+      if (location.href !== lastUrl) {
+        lastUrl = location.href;
+        setTimeout(updateWaveScrollbarClass, 100);
+      }
+    }, 200);
+  }
+
+  // ========== ИНИЦИАЛИЗАЦИЯ ==========
   async function init() {
     log('Инициализация');
     if (window.WolfyLibrary && window.WolfyLibrary.AssetsManager) {
@@ -792,6 +790,7 @@
     await loadSettingsFromDB();
     subscribeToPulseSyncSettings();
     injectSettingsUI();
+    initScrollbarController();
 
     if (styleObserver) styleObserver.disconnect();
     styleObserver = new MutationObserver(() => {
