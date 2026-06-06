@@ -261,12 +261,24 @@
       }
     `;
 
-    if (textShadowEnabled) {
+       if (textShadowEnabled) {
       css += `
-        body, p, span, button, h2, h3,
-        [class*="text"], [class*="Text"], [class*="title"], [class*="track"], [class*="Track"],
-        [class*="description"], [class*="desc"], [class*="SettingsListButtonItem_title"],
-        [class*="heading"], [class*="headline"] {
+        body:not([class*="VibePlayerbarMeta_timecodeOverlay"]):not([class*="VibePlayerbarMeta_trackName"]), 
+        p:not([class*="VibePlayerbarMeta_timecodeOverlay"]):not([class*="VibePlayerbarMeta_trackName"]), 
+        span:not([class*="VibePlayerbarMeta_timecodeOverlay"]):not([class*="VibePlayerbarMeta_trackName"]), 
+        button:not([class*="VibePlayerbarMeta_timecodeOverlay"]):not([class*="VibePlayerbarMeta_trackName"]),
+        h2:not([class*="VibePlayerbarMeta_timecodeOverlay"]):not([class*="VibePlayerbarMeta_trackName"]), 
+        h3:not([class*="VibePlayerbarMeta_timecodeOverlay"]):not([class*="VibePlayerbarMeta_trackName"]),
+        [class*="text"]:not([class*="VibePlayerbarMeta_timecodeOverlay"]):not([class*="VibePlayerbarMeta_trackName"]), 
+        [class*="Text"]:not([class*="VibePlayerbarMeta_timecodeOverlay"]):not([class*="VibePlayerbarMeta_trackName"]), 
+        [class*="title"]:not([class*="VibePlayerbarMeta_timecodeOverlay"]):not([class*="VibePlayerbarMeta_trackName"]), 
+        [class*="track"]:not([class*="VibePlayerbarMeta_timecodeOverlay"]):not([class*="VibePlayerbarMeta_trackName"]), 
+        [class*="Track"]:not([class*="VibePlayerbarMeta_timecodeOverlay"]):not([class*="VibePlayerbarMeta_trackName"]),
+        [class*="description"]:not([class*="VibePlayerbarMeta_timecodeOverlay"]):not([class*="VibePlayerbarMeta_trackName"]), 
+        [class*="desc"]:not([class*="VibePlayerbarMeta_timecodeOverlay"]):not([class*="VibePlayerbarMeta_trackName"]), 
+        [class*="SettingsListButtonItem_title"]:not([class*="VibePlayerbarMeta_timecodeOverlay"]):not([class*="VibePlayerbarMeta_trackName"]),
+        [class*="heading"]:not([class*="VibePlayerbarMeta_timecodeOverlay"]):not([class*="VibePlayerbarMeta_trackName"]), 
+        [class*="headline"]:not([class*="VibePlayerbarMeta_timecodeOverlay"]):not([class*="VibePlayerbarMeta_trackName"]) {
           opacity: 1 !important;
           color: #ffffff !important;
           -webkit-text-fill-color: #ffffff !important;
