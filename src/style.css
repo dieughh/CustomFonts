@@ -1,0 +1,72 @@
+.custom-fonts-dialog {
+    width: min(480px, calc(100vw - 48px));
+    max-height: calc(100vh - 48px);
+    padding: 24px;
+    border: 1px solid #444;
+    border-radius: 20px;
+    background: var(--ym-background-color-primary, #1e1e1e);
+    color: var(--ym-controls-color-primary-text-enabled_variant, #eee);
+    box-shadow: 0 20px 80px #0008;
+}
+.custom-fonts-dialog::backdrop {
+    background: #0009;
+}
+.custom-fonts-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.custom-fonts-content header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+.custom-fonts-content h2,
+.custom-fonts-content p {
+    margin: 0;
+}
+.custom-fonts-content small {
+    opacity: 0.7;
+    line-height: 1.5;
+}
+.custom-fonts-content label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.custom-fonts-content button,
+.custom-fonts-content select {
+    color: inherit;
+    background: #ffffff0d;
+    border: 1px solid #ffffff30;
+    border-radius: 10px;
+    padding: 12px 16px;
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+}
+.custom-fonts-content button:hover {
+    background: #ffffff1a;
+}
+.custom-fonts-content button:disabled,
+.custom-fonts-content select:disabled {
+    opacity: 0.5;
+    cursor: wait;
+}
+.custom-fonts-content option {
+    background: #1e1e1e;
+    color: #eee;
+}
+html.custom-fonts-wave {
+    scrollbar-width: none;
+}
+html.custom-fonts-wave ::-webkit-scrollbar {
+    display: none;
+    width: 0;
+}
+html.custom-fonts-wave [class*='VibePlayerbarMeta_progress'],
+html.custom-fonts-wave [class*='VibePlayerbarMeta_slider'] {
+    max-width: 100%;
+    overflow-x: hidden;
+}

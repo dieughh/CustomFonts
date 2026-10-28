@@ -1,0 +1,35 @@
+{
+  "name": "pulsesync-custom-fonts",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Custom Fonts — типографика Яндекс Музыки на PulseSync WebHost",
+  "scripts": {
+    "dev": "node ./scripts/dev-build.mjs",
+    "build": "node ./node_modules/vite/bin/vite.js build",
+    "build:modules": "node ./scripts/module-compile.mjs",
+    "format": "oxfmt .",
+    "sync": "node ./scripts/sync-addon.mjs",
+    "build:sync": "yarn build && yarn sync",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build && node --test scripts/test-addon.mjs",
+    "test:cdp": "node scripts/test-cdp.mjs",
+    "benchmark:cdp": "node scripts/benchmark-cdp.mjs"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "dependencies": {
+    "@pulsesync/addon-sdk": "0.17.0"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.5",
+    "@types/react": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "fake-indexeddb": "6.2.6",
+    "oxfmt": "0.74.0",
+    "react": "19.3.1",
+    "typescript": "7.0.2",
+    "vite": "8.3.5"
+  }
+}
